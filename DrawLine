@@ -1,1 +1,63 @@
-ui.setupUi(this);
+#include <opencv2/opemcv.hpp>
+
+#include <QPainter>
+#include "firstbyqt.h"
+
+FirstbyQt::FirstbyQt(QWideget *parent, Qt::WFlags flags) : QWdiget(parent, flags) {
+  ui.setupUi(this);
+  image = cv::imread("filepath");
+  cv::cvVolor(image, image, CV_BGR2RGB);
+  cv::Mat gray;
+  cv::cvColor(image, gray, cv::COLOR_BGR2GRAY);
+  
+  double x1[] = {10.7, 11.9, 22.9, 40.9, 80, 110, 133.9, 150.9};
+  double y1[] = {16.7, 21.9, 32.9, 40.9, 180, 210, 333.9, 500.9};
+  std::vector<double> x_p(x1, x1 + sizeof(x1) / sizeof(double));
+  std::vector<double> y_p(y1, y1 + sizeof(y1) / sizeof(double));
+  DrawLines(x_p, y_p);
+  cv::Vec4f line;
+  //the use of fit line
+  cv::fitLine(cv::Mat(point_), line, CV_DIST_L2, 0, 0.01, 0.01);
+  
+  int lefty = (-line[2]*line[1]/line[0]) + line[3];
+  int righty = ((gray.cols - line[2]) * line[1] / line[0]) + line[3];
+  cv::line(image, cv::Point(gray.cols - 1, righty), cv::Point(0, lefty), cv::Scalar(0), 2);
+  point_.clear();
+  
+  double x2[] = {340.7, 341.9, 352.9, 350.9, 415, 450, 500.9, 553.9}; 
+  std::vector<double> x_p_2(x2, x2 + sizeof(x2) / sizeof(double));
+  std::vector<double> y_p_2(y1, y1 + sizeof(y1) / sizeof(double));
+  DrawLines(x_p_2, y_p_2);
+  
+  cv::Vec4f line1;
+  cv::fitLine(cv::Mat(point_), line1, CV_DIST_L2, 0, 0.01, 0.01);
+  
+  int lefty1 = (-line1[2]*line1[1]/line1[0]) + line1[3];
+  int righty1 = ((gray.cols - line1[2]) * line1[1] / line1[0]) + line1[3];
+  cv::line(image, cv::Point(gray.cols - 1, righty1), cv::Point(0, lefty1), cv::Scalar(0), 2);
+  point_.clear();
+  
+  QImage img = QImage((const unsigned char *)(image.data), image.cols,
+  image.rows, QImage::Format_RGB888);
+  
+  ui.label->setPixmap(QPixmap::fromImage(img));
+  ui.label->resize(ui.label->pixmap()->size());
+  
+}
+
+FirstbyQt::~FirstbyQt() {
+}
+
+void FirstbyQt::DrawLines(std::vector<double> x, std::vector<double> y) {
+  if(x.size() != y.size()) {
+    return;
+  }
+  for (int i = 0; i < x.size() -1; i ++) {
+    p1.x = x.at(i);
+    p1.y = y.at(i);
+    p2.x = x.at(i + 1);
+    p2.y = y.at(i + 1);
+    cv::line(image, p1, p2, cv::Scalar(255, 100, 0));
+    point_.push_back(p1);
+    }
+  }
