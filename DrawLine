@@ -61,3 +61,30 @@ void FirstbyQt::DrawLines(std::vector<double> x, std::vector<double> y) {
     point_.push_back(p1);
     }
   }
+
+#ifndef FIRSTBYQT_H
+#define FIRSTBYQT_H
+
+#include <QtGui/QWidget>
+#include <opencv2/opencv.hpp>
+
+#include "ui_firstbyqt.h"
+
+class FirstbyQt : public QWidget
+{
+    Q_OBJECT
+
+public:
+    FirstbyQt(QWidget *parent = 0, Qt::WFlags flags = 0);
+    ~FirstbyQt();
+    void DrawLines(std::vector<double> x, std::vector<double> y);
+private:
+    Ui::FirstbyQtClass ui;
+    cv::Mat image;
+    cv::Point p1, p2;
+    std::vector<cv::Point> point_
+    
+};
+
+#endif // FIRSTBYQT_H
+    
